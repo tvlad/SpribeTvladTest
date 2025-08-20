@@ -62,19 +62,25 @@ allure {
     }
 }
 
-tasks.register('spribeTest', Test) {
-    useTestNG {
-        suites 'src/test/resources/testng.xml'
 
-        // Configure parallel execution
+tasks.register('spribeTests', Test) {
+    useTestNG() {
         parallel = 'methods'
-        threadCount = findProperty('test.thread.count') ?: '3'
+        threadCount = findProperty('test.thread.count') ?: '3' as int
 
-        // System properties
-        systemProperty 'allure.results.directory', "${layout.buildDirectory.get()}/allure-results"
-        systemProperty 'test.environment', findProperty('test.environment') ?: 'TEST'
-        systemProperty 'app.base.url', findProperty('app.base.url') ?: 'http://3.68.165.45'
-        systemProperty 'test.thread.count', findProperty('test.thread.count') ?: '3'
+        // Set system properties at execution time
+        doFirst {
+            systemProperty 'allure.results.directory', "${layout.buildDirectory.get()}/allure-results"
+            systemProperty 'test.environment', findProperty('test.environment') ?: 'TEST'
+            systemProperty 'app.base.url', findProperty('app.base.url') ?: 'http://3.68.165.45'
+            systemProperty 'test.thread.count', findProperty('test.thread.count') ?: '3'
+        }
+
+        // Add all listeners from testng.xml
+        listeners << 'io.qameta.allure.testng.AllureTestNg'
+        listeners << 'com.interview.test.listeners.TestExecutionListener'
+        listeners << 'com.interview.test.listeners.AllureEnvironmentWriter'
+
     }
 
     // JVM arguments
@@ -153,7 +159,7 @@ tasks.register('debugTest', Test) {
     systemProperty 'app.base.url', findProperty('app.base.url') ?: 'http://3.68.165.45'
     systemProperty 'test.thread.count', '1'
     systemProperty 'test.debug.mode', 'true'
-    systemProperty 'allure.results.directory', "${buildDir}/debug-allure-results"
+    systemProperty 'allure.results.directory', "${layout.buildDirectory.get()}/debug-allure-results"
 
     // Configure test selection via command line
     if (project.hasProperty('tests')) {
