@@ -1,1 +1,25 @@
+// Configure plugin management
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'SpribeTvladTest'
+
+// Enable Gradle build cache
+buildCache {
+    local {
+        enabled = true
+    }
+}
+
+// Configure dependency resolution
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
