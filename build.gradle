@@ -1,20 +1,122 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+group = 'com.interview.test'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+ext {
+    testngVersion = '7.8.0'
+    restAssuredVersion = '5.3.2'
+    jacksonVersion = '2.15.2'
+    allureVersion = '2.24.0'
+    slf4jVersion = '2.0.7'
+    logbackVersion = '1.4.11'
+    aspectjVersion = '1.9.19'
 }
 
-test {
-    useJUnitPlatform()
+dependencies {
+    // TestNG
+    testImplementation "org.testng:testng:${testngVersion}"
+
+    // REST Assured
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "io.rest-assured:json-schema-validator:${restAssuredVersion}"
+
+    // Jackson for JSON processing
+    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+    // Allure
+    testImplementation "io.qameta.allure:allure-testng:${allureVersion}"
+    testImplementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
+
+    // Logging
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
+
+    // AspectJ for Allure
+    testImplementation "org.aspectj:aspectjweaver:${aspectjVersion}"
+}
+
+allure {
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            testng {
+                adapterVersion.set(allureVersion)
+            }
+        }
+    }
+}
+
+tasks.register('spribeTest', Test) {
+    useTestNG {
+        suites 'src/test/resources/testng.xml'
+
+        // Configure parallel execution
+        parallel = 'methods'
+        threadCount = findProperty('test.thread.count') ?: '3'
+
+        // System properties
+        systemProperty 'allure.results.directory', "${layout.buildDirectory.get()}/allure-results"
+        systemProperty 'test.environment', findProperty('test.environment') ?: 'TEST'
+        systemProperty 'app.base.url', findProperty('app.base.url') ?: 'http://3.68.165.45'
+        systemProperty 'test.thread.count', findProperty('test.thread.count') ?: '3'
+    }
+
+    // JVM arguments
+    jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('aspectjweaver') }}"
+    jvmArgs '-Xmx1024m'
+
+    // Test output
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
+    }
+
+    // Generate reports
+    reports {
+        html.required = true
+        junitXml.required = true
+    }
+
+    // Fail fast
+    failFast = false
+}
+
+
+// Clean Allure results
+tasks.register('cleanAllureResults', Delete) {
+    delete layout.buildDirectory.dir("allure-results")
+}
+
+clean.dependsOn cleanAllureResults
+
+// Generate Allure report
+tasks.register('generateAllureReport', Exec) {
+    dependsOn test
+    commandLine 'allure', 'generate', "${layout.buildDirectory.get()}/allure-results", '--clean', '--output', "${layout.buildDirectory.get()}/reports/allure"
+    doLast {
+        println "Allure report generated at: ${layout.buildDirectory.get()}/reports/allure/index.html"
+    }
+}
+
+// Serve Allure report
+tasks.register('runAllureServe', Exec) {
+    dependsOn test
+    commandLine 'allure', 'serve', "${layout.buildDirectory.get()}/allure-results"
 }
