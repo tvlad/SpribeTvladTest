@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="PlayerAPI_TestSuite" thread-count="3" parallel="methods" verbose="2">
+
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="com.interview.test.listeners.TestExecutionListener"/>
+        <listener class-name="com.interview.test.listeners.AllureEnvironmentWriter"/>
+    </listeners>
+
+    <test name="PlayerAPI_Tests" preserve-order="true">
+        <groups>
+            <run>
+                <include name="smoke"/>
+                <include name="regression"/>
+                <include name="positive"/>
+                <include name="negative"/>
+                <include name="critical"/>
+            </run>
+        </groups>
+
+        <classes>
+            <class name="com.interview.test.tests.PlayerCreateTests"/>
+            <class name="com.interview.test.tests.PlayerGetTests"/>
+            <class name="com.interview.test.tests.PlayerUpdateTests"/>
+            <class name="com.interview.test.tests.PlayerDeleteTests"/>
+            <class name="com.interview.test.tests.PlayerGetAllTests"/>
+            <class name="com.interview.test.tests.SecurityTests"/>
+        </classes>
+    </test>
+
+</suite>
