@@ -136,6 +136,6 @@ public class PlayerApiClient extends BaseApiClient {
                 .role(role)
                 .age(age)
                 .gender(gender)
-                .screenName(screenName);
+                .screenName(screenName).build();
     }
 }

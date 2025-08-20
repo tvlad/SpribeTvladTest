@@ -98,6 +98,101 @@ tasks.register('spribeTest', Test) {
     failFast = false
 }
 
+tasks.register('debugTest', Test) {
+    group = 'verification'
+    description = 'Run a single test method for debugging purposes'
+
+    useTestNG {
+        // Single thread for debugging to avoid concurrency issues
+        parallel = 'none'
+        threadCount = 1
+
+        // Add all listeners from testng.xml
+        listeners << 'io.qameta.allure.testng.AllureTestNg'
+        listeners << 'com.interview.test.listeners.TestExecutionListener'
+        listeners << 'com.interview.test.listeners.AllureEnvironmentWriter'
+
+        // Configure test selection
+        if (project.hasProperty('testClass')) {
+            includeGroups = []  // Clear groups to run specific test
+            include "**/${project.property('testClass')}.class"
+        }
+
+        if (project.hasProperty('testMethod')) {
+            // Use TestNG method selection
+            useDefaultListeners = true
+        }
+    }
+
+    // Enhanced logging for debugging
+    testLogging {
+        showStandardStreams = true
+        events "STARTED", "PASSED", "FAILED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR"
+        exceptionFormat = "full"
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+
+        // Show test details
+        info.events = ["FAILED", "SKIPPED"]
+        debug.events = ["STARTED", "PASSED", "FAILED", "SKIPPED", "STANDARD_OUT", "STANDARD_ERROR"]
+    }
+
+    // Debug-specific JVM arguments
+    jvmArgs "-Xdebug",
+            "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005",
+            "-Dtest.debug=true",
+            "-Dtest.logging.enabled=true",
+            "-Dlogback.configurationFile=src/test/resources/logback-debug.xml"
+
+    // Always run (don't use cache)
+    outputs.upToDateWhen { false }
+
+    // Set system properties for debugging
+    systemProperty 'test.environment', findProperty('test.environment') ?: 'TEST'
+    systemProperty 'app.base.url', findProperty('app.base.url') ?: 'http://3.68.165.45'
+    systemProperty 'test.thread.count', '1'
+    systemProperty 'test.debug.mode', 'true'
+    systemProperty 'allure.results.directory', "${buildDir}/debug-allure-results"
+
+    // Configure test selection via command line
+    if (project.hasProperty('tests')) {
+        filter {
+            includeTestsMatching project.property('tests')
+        }
+    }
+
+    // Increase timeouts for debugging
+    systemProperty 'api.request.timeout', '120000'  // 2 minutes
+    systemProperty 'api.connection.timeout', '60000'  // 1 minute
+
+    // Debug reporting
+    reports {
+        html.destination = file("${layout.buildDirectory.get()}/reports/debug-tests")
+        junitXml.destination = file("${layout.buildDirectory.get()}/debug-test-results")
+    }
+
+    // Print debug information
+    doFirst {
+        println "=== DEBUG TEST EXECUTION ==="
+        println "Test Class: ${project.findProperty('testClass') ?: 'Not specified'}"
+        println "Test Method: ${project.findProperty('testMethod') ?: 'Not specified'}"
+        println "Test Pattern: ${project.findProperty('tests') ?: 'Not specified'}"
+        println "Base URL: ${systemProperties['app.base.url']}"
+        println "Environment: ${systemProperties['test.environment']}"
+        println "Debug Port: 5005 (for remote debugging)"
+        println "Listeners: AllureTestNg, TestExecutionListener, AllureEnvironmentWriter"
+        println "=========================="
+    }
+
+    doLast {
+        println "=== DEBUG TEST COMPLETED ==="
+//        println "Reports: ${build/reports/allure-report/allureReport}/index.html"
+        println "Allure Results: ${layout.buildDirectory.get()}/debug-allure-results"
+        println "=========================="
+    }
+}
+
 
 // Clean Allure results
 tasks.register('cleanAllureResults', Delete) {
@@ -120,3 +215,5 @@ tasks.register('runAllureServe', Exec) {
     dependsOn test
     commandLine 'allure', 'serve', "${layout.buildDirectory.get()}/allure-results"
 }
+
+tasks.withType(Test)*.finalizedBy 'allureReport'

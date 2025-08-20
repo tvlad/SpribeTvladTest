@@ -36,8 +36,8 @@ public class PlayerUpdateRequest {
     public PlayerUpdateRequest() {}
 
     // Builder pattern
-    public static PlayerUpdateRequest builder() {
-        return new PlayerUpdateRequest();
+    public static Builder builder() {
+        return new Builder();
     }
 
     public PlayerUpdateRequest login(String login) {
@@ -68,6 +68,45 @@ public class PlayerUpdateRequest {
     public PlayerUpdateRequest screenName(String screenName) {
         this.screenName = screenName;
         return this;
+    }
+
+    // Proper Builder class
+    public static class Builder {
+        private final PlayerUpdateRequest request = new PlayerUpdateRequest();
+
+        public Builder login(String login) {
+            request.login = login;
+            return this;
+        }
+
+        public Builder password(String password) {
+            request.password = password;
+            return this;
+        }
+
+        public Builder role(String role) {
+            request.role = role;
+            return this;
+        }
+
+        public Builder age(Integer age) {
+            request.age = age;
+            return this;
+        }
+
+        public Builder gender(String gender) {
+            request.gender = gender;
+            return this;
+        }
+
+        public Builder screenName(String screenName) {
+            request.screenName = screenName;
+            return this;
+        }
+
+        public PlayerUpdateRequest build() {
+            return request;
+        }
     }
 
     // Getters and setters
