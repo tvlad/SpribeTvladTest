@@ -27,11 +27,11 @@ ext {
 
 dependencies {
     // TestNG
-    testImplementation "org.testng:testng:${testngVersion}"
+    implementation "org.testng:testng:${testngVersion}"
 
     // REST Assured
-    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    testImplementation "io.rest-assured:json-schema-validator:${restAssuredVersion}"
+    implementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    implementation "io.rest-assured:json-schema-validator:${restAssuredVersion}"
 
     // Jackson for JSON processing
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
@@ -40,15 +40,15 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
 
     // Allure
-    testImplementation "io.qameta.allure:allure-testng:${allureVersion}"
-    testImplementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
+    implementation "io.qameta.allure:allure-testng:${allureVersion}"
+    implementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
 
     // Logging
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "ch.qos.logback:logback-classic:${logbackVersion}"
 
     // AspectJ for Allure
-    testImplementation "org.aspectj:aspectjweaver:${aspectjVersion}"
+    implementation "org.aspectj:aspectjweaver:${aspectjVersion}"
 }
 
 allure {
