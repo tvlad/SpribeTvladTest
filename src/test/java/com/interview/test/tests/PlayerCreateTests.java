@@ -1,6 +1,8 @@
 package com.interview.test.tests;
 
+import com.interview.test.api.PlayerCreationService;
 import com.interview.test.base.BaseTest;
+import com.interview.test.models.PlayerCreateRequest;
 import com.interview.test.models.PlayerCreateResponse;
 import com.interview.test.utils.TestDataFactory;
 import io.qameta.allure.*;
@@ -22,25 +24,30 @@ public class PlayerCreateTests extends BaseTest {
     @Description("Test successful player creation with valid supervisor editor and complete player data")
     @Severity(SeverityLevel.CRITICAL)
     public void testCreatePlayerWithValidData() {
-        TestDataFactory.PlayerData testData = createValidTestData();
+        PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData();
+        new PlayerCreationService(testData)
+                .verifyStatusCode(200)
+                .verifyCreatedUser();
 
-        Response response = playerApi.createPlayer(
-                validEditor,
-                testData.getLogin(),
-                testData.getPassword(),
-                testData.getRole(),
-                testData.getAge().toString(),
-                testData.getGender(),
-                testData.getScreenName()
-        );
-
-        validateSuccessfulCreation(response, testData);
-
-        // Track for cleanup
-        if (response.getStatusCode() == 200) {
-            PlayerCreateResponse createResponse = response.as(PlayerCreateResponse.class);
-            createdPlayerIds.add(createResponse.getId());
-        }
+//        TestDataFactory.PlayerData testData = createValidTestData();
+//
+//        Response response = playerApi.createPlayer(
+//                validEditor,
+//                testData.getLogin(),
+//                testData.getPassword(),
+//                testData.getRole(),
+//                testData.getAge().toString(),
+//                testData.getGender(),
+//                testData.getScreenName()
+//        );
+//
+//        validateSuccessfulCreation(response, testData);
+//
+//        // Track for cleanup
+//        if (response.getStatusCode() == 200) {
+//            PlayerCreateResponse createResponse = response.as(PlayerCreateResponse.class);
+//            createdPlayerIds.add(createResponse.getId());
+//        }
     }
 
     @Test(groups = {"smoke", "positive"}, priority = 2)

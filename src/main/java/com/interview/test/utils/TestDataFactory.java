@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class TestDataFactory {
 
-    private static final ConfigurationManager config = ConfigurationManager.getInstance();
+    public static final ConfigurationManager config = ConfigurationManager.getInstance();
     private static final Random random = new Random();
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
@@ -163,11 +163,11 @@ public class TestDataFactory {
 
     // Helper methods for generating specific data types
 
-    private static String getRandomValidRole() {
+    public static String getRandomValidRole() {
         return VALID_ROLES[random.nextInt(VALID_ROLES.length)];
     }
 
-    private static String getRandomValidGender() {
+    public static String getRandomValidGender() {
         return VALID_GENDERS[random.nextInt(VALID_GENDERS.length)];
     }
 
@@ -191,7 +191,7 @@ public class TestDataFactory {
         return INVALID_SCREEN_NAMES[random.nextInt(INVALID_SCREEN_NAMES.length)];
     }
 
-    private static Integer generateValidAge() {
+    public static Integer generateValidAge() {
         return ThreadLocalRandom.current().nextInt(18, 100);
     }
 
@@ -205,7 +205,7 @@ public class TestDataFactory {
         return invalidAges[random.nextInt(invalidAges.length)];
     }
 
-    private static String generateValidScreenName() {
+    public static String generateValidScreenName() {
         return VALID_SCREEN_NAMES[random.nextInt(VALID_SCREEN_NAMES.length)] +
                 ThreadLocalRandom.current().nextInt(1, 999);
     }

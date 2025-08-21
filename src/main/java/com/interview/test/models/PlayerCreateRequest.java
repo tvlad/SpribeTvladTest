@@ -3,6 +3,9 @@ package com.interview.test.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.interview.test.utils.TestDataFactory;
+
+import static com.interview.test.utils.TestDataFactory.*;
 
 /**
  * Player Create Request Model
@@ -103,5 +106,16 @@ public class PlayerCreateRequest {
                 ", screenName='" + screenName + '\'' +
                 ", password='" + (password != null ? "***" : null) + '\'' +
                 '}';
+    }
+
+    public static PlayerCreateRequest generateValidPlayerData() {
+        return PlayerCreateRequest.builder()
+                .login(generateUniqueLogin())
+                .password(config.getProperty("default.player.password", "testPassword123"))
+                .role("admin")
+                .age(generateValidAge())
+                .gender(getRandomValidGender())
+                .screenName(generateValidScreenName())
+                .build();
     }
 }
