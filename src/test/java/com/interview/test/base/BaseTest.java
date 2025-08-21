@@ -65,10 +65,8 @@ public abstract class BaseTest {
     }
 
 
-    @AfterSuite(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
     public void tearDownMethod() {
-        // Clean up created test data
-        cleanUpCreatedPlayers();
 
         logger.debug("Test method teardown completed");
     }
@@ -80,6 +78,8 @@ public abstract class BaseTest {
 
     @AfterSuite(alwaysRun = true)
     public void tearDownSuite() {
+        // Clean up created test data
+        cleanUpCreatedPlayers();
         logger.info("Test suite teardown completed");
     }
 

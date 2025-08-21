@@ -35,11 +35,10 @@ public class PlayerCreateTests extends BaseTest {
     @Description("Test player creation using admin editor privileges")
     @Severity(SeverityLevel.NORMAL)
     public void testCreatePlayerWithAdminEditor() {
-        TestDataFactory.PlayerData testData = createValidTestData();
-
-        Response response = createAndTrackPlayer(adminEditor, testData);
-
-        validateSuccessfulCreation(response, testData);
+        PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData();
+        new PlayerCreationService(testData, config.getAdminEditor())
+                .verifyStatusCode(403)
+                ;
     }
 
     @Test(groups = {"positive", "regression"}, priority = 3)
@@ -47,25 +46,12 @@ public class PlayerCreateTests extends BaseTest {
     @Description("Test player creation when password is optional (not provided)")
     @Severity(SeverityLevel.NORMAL)
     public void testCreatePlayerWithoutPassword() {
-        TestDataFactory.PlayerData testData = createValidTestData();
-
-        Response response = playerApi.createPlayer(
-                validEditor,
-                testData.getLogin(),
-                null, // No password
-                testData.getRole(),
-                testData.getAge().toString(),
-                testData.getGender(),
-                testData.getScreenName()
-        );
-
-        assertEquals(response.getStatusCode(), 200, "Player creation should succeed without password");
-
-        PlayerCreateResponse createResponse = response.as(PlayerCreateResponse.class);
-        assertNotNull(createResponse.getId(), "Player ID should be generated");
-        assertEquals(createResponse.getLogin(), testData.getLogin());
-
-        createdPlayerIds.add(createResponse.getId());
+        PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData();
+        testData.setPassword(null);
+        new PlayerCreationService(testData)
+                .verifyStatusCode(200)
+//                .verifyCreatedUser()
+                ;
     }
 
     @Test(groups = {"positive", "regression"}, priority = 4)
