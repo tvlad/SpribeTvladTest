@@ -3,12 +3,17 @@ package com.interview.test.api;
 import com.interview.test.models.PlayerCreateRequest;
 import com.interview.test.models.PlayerCreateResponse;
 import com.interview.test.models.PlayerGetAllResponse;
+import com.interview.test.models.PlayerItem;
 
 import java.util.List;
 
 public class PlayerGetAllService extends BaseService<PlayerCreationService> {
 
-    private List<PlayerGetAllResponse> playerList;
+    private List<PlayerItem> playerList;
+
+    public List<PlayerItem> getPlayerList() {
+        return playerList;
+    }
 
     /**
      * Constructor for positive tests - uses default editor and expectedStatusCode
@@ -29,7 +34,7 @@ public class PlayerGetAllService extends BaseService<PlayerCreationService> {
     private void executeGetAllPlayers() {
         response = new PlayerApiClient().getAllPlayers();
         if (response.statusCode() == 200) {
-            this.playerList = List.of(response.as(PlayerGetAllResponse[].class));
+            this.playerList = response.as(PlayerGetAllResponse.class).getPlayers();
         }
     }
 

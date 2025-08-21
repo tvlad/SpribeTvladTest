@@ -1,6 +1,7 @@
 package com.interview.test.base;
 
 import com.interview.test.api.PlayerApiClient;
+import com.interview.test.api.PlayerGetAllService;
 import com.interview.test.config.ConfigurationManager;
 import com.interview.test.models.*;
 import com.interview.test.utils.TestDataFactory;
@@ -12,6 +13,7 @@ import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.*;
@@ -35,6 +37,11 @@ public abstract class BaseTest {
     protected String adminEditor;
     protected String invalidEditor;
 
+    private final String[] VALID_SCREEN_NAMES = {
+            "TestPlayer", "GameMaster", "ProGamer", "CoolUser", "PlayerOne",
+            "Champion", "Warrior", "Mage", "Archer", "Knight"
+    };
+
     @BeforeSuite(alwaysRun = true)
     public void setUpSuite() {
         logger.info("Setting up test suite...");
@@ -56,7 +63,6 @@ public abstract class BaseTest {
         logger.info("Using editors - Valid: {}, Admin: {}, Invalid: {}",
                 validEditor, adminEditor, invalidEditor);
     }
-
 
 
     @AfterSuite(alwaysRun = true)
@@ -123,9 +129,11 @@ public abstract class BaseTest {
      */
     @Step("Clean up created test players")
     protected void cleanUpCreatedPlayers() {
-
-
-
+        List<PlayerItem> playerList = new PlayerGetAllService().getPlayerList();
+        playerList.forEach(item -> {
+            if (Arrays.stream(VALID_SCREEN_NAMES).filter(item.getScreenName()::contains).count() == 1)
+                playerApi.deletePlayer(config.getValidEditor(), item.getId());
+        });
     }
 
     // Common assertion methods

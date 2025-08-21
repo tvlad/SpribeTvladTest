@@ -28,26 +28,6 @@ public class PlayerCreateTests extends BaseTest {
         new PlayerCreationService(testData)
                 .verifyStatusCode(200)
                 .verifyCreatedUser();
-
-//        TestDataFactory.PlayerData testData = createValidTestData();
-//
-//        Response response = playerApi.createPlayer(
-//                validEditor,
-//                testData.getLogin(),
-//                testData.getPassword(),
-//                testData.getRole(),
-//                testData.getAge().toString(),
-//                testData.getGender(),
-//                testData.getScreenName()
-//        );
-//
-//        validateSuccessfulCreation(response, testData);
-//
-//        // Track for cleanup
-//        if (response.getStatusCode() == 200) {
-//            PlayerCreateResponse createResponse = response.as(PlayerCreateResponse.class);
-//            createdPlayerIds.add(createResponse.getId());
-//        }
     }
 
     @Test(groups = {"smoke", "positive"}, priority = 2)
