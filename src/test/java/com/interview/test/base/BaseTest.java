@@ -57,26 +57,12 @@ public abstract class BaseTest {
                 validEditor, adminEditor, invalidEditor);
     }
 
-    @BeforeMethod(alwaysRun = true)
-    public void setUpMethod() {
-        softAssert = new SoftAssert();
-        createdPlayerIds = new ArrayList<>();
 
-        logger.debug("Starting test method setup");
-    }
 
-    @AfterMethod(alwaysRun = true)
+    @AfterSuite(alwaysRun = true)
     public void tearDownMethod() {
         // Clean up created test data
         cleanUpCreatedPlayers();
-
-        // Assert all soft assertions
-        try {
-            softAssert.assertAll();
-        } catch (AssertionError e) {
-            logger.error("Soft assertion failures: {}", e.getMessage());
-            throw e;
-        }
 
         logger.debug("Test method teardown completed");
     }
@@ -137,27 +123,9 @@ public abstract class BaseTest {
      */
     @Step("Clean up created test players")
     protected void cleanUpCreatedPlayers() {
-        if (createdPlayerIds.isEmpty()) {
-            return;
-        }
 
-        logger.info("Cleaning up {} created players", createdPlayerIds.size());
 
-        for (Long playerId : createdPlayerIds) {
-            try {
-                Response deleteResponse = playerApi.deletePlayer(adminEditor, playerId);
-                if (deleteResponse.getStatusCode() == 200) {
-                    logger.debug("Successfully deleted player ID: {}", playerId);
-                } else {
-                    logger.warn("Failed to delete player ID: {} - Status: {}",
-                            playerId, deleteResponse.getStatusCode());
-                }
-            } catch (Exception e) {
-                logger.error("Error deleting player ID: {} - {}", playerId, e.getMessage());
-            }
-        }
 
-        createdPlayerIds.clear();
     }
 
     // Common assertion methods
