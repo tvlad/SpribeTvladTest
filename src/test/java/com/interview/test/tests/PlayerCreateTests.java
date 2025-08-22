@@ -59,14 +59,14 @@ public class PlayerCreateTests extends BaseTest {
     @DataProvider()
     public Object[][] ageBoundaryTestData() {
         return new Object[][]{
-                {17, "too young"},
+                {16, "too young"},
                 {61, "too old"},
         };
     }
 
     @Test(dataProvider = "ageBoundaryTestData", groups = {"positive", "regression"}, priority = 4)
     @Story("Create Player with Age Boundary Values")
-    @Description("Test player creation with minimum and maximum allowed age values: {description}")
+    @Description("Test player creation with minimum and maximum allowed age values:")
     @Severity(SeverityLevel.NORMAL)
     public void testCreatePlayerWithBoundaryValues(int ageValue, String description) {
         PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData().setAge(ageValue);
