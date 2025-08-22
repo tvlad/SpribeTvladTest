@@ -129,6 +129,17 @@ public class PlayerCreateRequest {
                 '}';
     }
 
+    public PlayerGetByIdResponse toPlayerGetByIdResponse() {
+        return new PlayerGetByIdResponse()
+                .setId(null)
+                .setLogin(this.getLogin())
+                .setRole(this.getRole())
+                .setAge(this.getAge())
+                .setGender(this.getGender())
+                .setScreenName(this.getScreenName())
+                .setPassword(this.getPassword());
+    }
+
     public static PlayerCreateRequest generateValidPlayerData() {
         return PlayerCreateRequest.builder()
                 .login(generateUniqueLogin())

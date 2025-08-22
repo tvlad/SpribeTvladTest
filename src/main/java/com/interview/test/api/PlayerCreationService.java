@@ -2,6 +2,7 @@ package com.interview.test.api;
 
 import com.interview.test.models.PlayerCreateRequest;
 import com.interview.test.models.PlayerCreateResponse;
+import com.interview.test.models.PlayerGetByIdResponse;
 import io.qameta.allure.Step;
 import org.testng.asserts.SoftAssert;
 
@@ -10,6 +11,11 @@ import java.util.List;
 public class PlayerCreationService extends BaseService<PlayerCreationService> {
 
     private PlayerCreateResponse createdPlayer;
+
+    public PlayerCreateRequest getPlayerData() {
+        return playerData;
+    }
+
     private final PlayerCreateRequest playerData;
     private final List<Long> playerIds;
 
@@ -99,6 +105,10 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
 
     public PlayerCreateResponse getCreatedPlayer() {
         return createdPlayer;
+    }
+
+    public PlayerGetByIdResponse getExpectedCreatedPlayer() {
+        return this.playerData.toPlayerGetByIdResponse().setId(this.createdPlayer.getId());
     }
 
     /**

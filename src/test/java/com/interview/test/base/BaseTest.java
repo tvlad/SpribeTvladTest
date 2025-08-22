@@ -142,35 +142,6 @@ public abstract class BaseTest {
     // Common assertion methods
 
     /**
-     * Validates successful player creation response
-     */
-    @Step("Validate successful player creation")
-    protected void validateSuccessfulCreation(Response response, TestDataFactory.PlayerData expectedData) {
-        assertEquals(response.getStatusCode(), 200, "Expected successful creation status");
-
-        PlayerCreateResponse createResponse = response.as(PlayerCreateResponse.class);
-
-        assertNotNull(createResponse.getId(), "Player ID should not be null");
-        assertTrue(createResponse.getId() > 0, "Player ID should be positive");
-        assertEquals(createResponse.getLogin(), expectedData.getLogin(), "Login mismatch");
-        assertEquals(createResponse.getRole(), expectedData.getRole(), "Role mismatch");
-        assertEquals(createResponse.getAge(), expectedData.getAge(), "Age mismatch");
-        assertEquals(createResponse.getGender(), expectedData.getGender(), "Gender mismatch");
-        assertEquals(createResponse.getScreenName(), expectedData.getScreenName(), "Screen name mismatch");
-
-        // Password should be returned in creation response
-        if (expectedData.getPassword() != null) {
-            assertEquals(createResponse.getPassword(), expectedData.getPassword(), "Password mismatch");
-        }
-
-        // Validate response time
-        assertTrue(response.getTime() < config.getRequestTimeout(),
-                "Response time should be less than timeout");
-
-        logger.info("Player creation validation passed for ID: {}", createResponse.getId());
-    }
-
-    /**
      * Validates error response
      */
     @Step("Validate error response with status {expectedStatus}")

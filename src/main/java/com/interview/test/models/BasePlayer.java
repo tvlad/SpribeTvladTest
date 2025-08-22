@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Base Player Model with common fields
+ * Base Player Model with common fields and method chaining support
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,24 +36,44 @@ abstract class BasePlayer {
     // Constructors
     public BasePlayer() {}
 
-    // Getters and setters
+    // Getters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
     public String getLogin() { return login; }
-    public void setLogin(String login) { this.login = login; }
-
     public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
     public Integer getAge() { return age; }
-    public void setAge(Integer age) { this.age = age; }
-
     public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
-
     public String getScreenName() { return screenName; }
-    public void setScreenName(String screenName) { this.screenName = screenName; }
+
+    // Setters with method chaining
+    public BasePlayer setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public BasePlayer setLogin(String login) {
+        this.login = login;
+        return this;
+    }
+
+    public BasePlayer setRole(String role) {
+        this.role = role;
+        return this;
+    }
+
+    public BasePlayer setAge(Integer age) {
+        this.age = age;
+        return this;
+    }
+
+    public BasePlayer setGender(String gender) {
+        this.gender = gender;
+        return this;
+    }
+
+    public BasePlayer setScreenName(String screenName) {
+        this.screenName = screenName;
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {
