@@ -5,6 +5,8 @@ import com.interview.test.models.PlayerCreateResponse;
 import io.qameta.allure.Step;
 import org.testng.asserts.SoftAssert;
 
+import java.util.List;
+
 public class PlayerCreationService extends BaseService<PlayerCreationService> {
 
     private PlayerCreateResponse createdPlayer;
@@ -51,6 +53,7 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
         response = new PlayerApiClient().createPlayer(editor, playerData);
         if (response.statusCode() == 200) {
             this.createdPlayer = response.as(PlayerCreateResponse.class);
+
         }
     }
 
@@ -83,73 +86,13 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
     public PlayerCreateResponse getCreatedPlayer() {
         return createdPlayer;
     }
-}
 
-//package com.interview.test.api;
-//
-//import com.interview.test.config.ConfigurationManager;
-//import com.interview.test.models.PlayerCreateRequest;
-//import com.interview.test.models.PlayerCreateResponse;
-//import io.qameta.allure.Step;
-//import io.restassured.response.Response;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.testng.asserts.SoftAssert;
-//
-//
-//public class PlayerCreationService {
-//
-//    private PlayerCreateResponse createdPlayer;
-//    private final ConfigurationManager config = ConfigurationManager.getInstance();
-//    private static final Logger logger = LoggerFactory.getLogger(ConfigurationManager.class);
-//    private final PlayerCreateRequest playerData;
-//    private String editor = "supervisor";
-//    private Response response;
-//    private Integer expectedStatusCode = 200;
-//
-//    public PlayerCreationService(PlayerCreateRequest playerData) {
-//        this.playerData = playerData;
-//        response = new PlayerApiClient().createPlayer(editor, playerData);
-//        if (response.statusCode() == 200)
-//            this.createdPlayer = response.as(PlayerCreateResponse.class);
-//    }
-//
-//    @Step
-//    public PlayerCreationService verifyStatusCode(int expectedStatusCode){
-//        response.then().statusCode(expectedStatusCode);
-//        return this;
-//    }
-//
-//    @Step
-//    public PlayerCreationService verifyStatusCode(){
-//        response.then().statusCode(this.expectedStatusCode);
-//        return this;
-//    }
-//
-//    @Step
-//    public PlayerCreationService verifyCreatedUser(){
-//        SoftAssert soft = new SoftAssert();
-//        soft.assertEquals(response.getStatusCode(), 200, "Expected successful creation status");
-//
-//        soft.assertNotNull(createdPlayer.getId(), "Player ID should not be null");
-//        soft.assertTrue(createdPlayer.getId() > 0, "Player ID should be positive");
-//        soft.assertEquals(createdPlayer.getLogin(), playerData.getLogin(), "Login mismatch");
-//        soft.assertEquals(createdPlayer.getRole(), playerData.getRole(), "Role mismatch");
-//        soft.assertEquals(createdPlayer.getAge(), playerData.getAge(), "Age mismatch");
-//        soft.assertEquals(createdPlayer.getGender(), playerData.getGender(), "Gender mismatch");
-//        soft.assertEquals(createdPlayer.getScreenName(), playerData.getScreenName(), "Screen name mismatch");
-//
-//        // Password should be returned in creation response
-//        if (playerData.getPassword() != null) {
-//            soft.assertEquals(createdPlayer.getPassword(), playerData.getPassword(), "Password mismatch");
-//        }
-//
-//        // Validate response time
-//        soft.assertTrue(response.getTime() < config.getRequestTimeout(),
-//                "Response time should be less than timeout");
-//        soft.assertAll();
-//
-//        logger.info("Player creation validation passed for ID: {}", createdPlayer.getId());
-//        return this;
-//    }
-//}
+    @Step("Track created player for cleanup")
+    public PlayerCreationService trackForCleanup(List<Long> playerIds) {
+        if (createdPlayer != null && createdPlayer.getId() != null) {
+            playerIds.add(createdPlayer.getId());
+            logger.info("Added player ID {} to cleanup list", createdPlayer.getId());
+        }
+        return this;
+    }
+}

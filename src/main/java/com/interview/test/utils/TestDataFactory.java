@@ -192,7 +192,7 @@ public class TestDataFactory {
     }
 
     public static Integer generateValidAge() {
-        return ThreadLocalRandom.current().nextInt(18, 100);
+        return ThreadLocalRandom.current().nextInt(18, 60);
     }
 
     private static Integer generateBoundaryAge() {

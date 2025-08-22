@@ -3,7 +3,6 @@ package com.interview.test.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.interview.test.utils.TestDataFactory;
 
 import static com.interview.test.utils.TestDataFactory.*;
 
@@ -43,7 +42,10 @@ public class PlayerCreateRequest {
     public void setLogin(String login) { this.login = login; }
 
     public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public PlayerCreateRequest setPassword(String password) {
+        this.password = password;
+        return this;
+    }
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
