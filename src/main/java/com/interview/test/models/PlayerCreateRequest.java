@@ -51,7 +51,7 @@ public class PlayerCreateRequest {
     public void setRole(String role) { this.role = role; }
 
     public Integer getAge() { return age; }
-    public void setAge(Integer age) { this.age = age; }
+    public PlayerCreateRequest setAge(Integer age) { this.age = age; return this;}
 
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }

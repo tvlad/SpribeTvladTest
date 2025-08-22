@@ -11,32 +11,39 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
 
     private PlayerCreateResponse createdPlayer;
     private final PlayerCreateRequest playerData;
+    private final List<Long> playerIds;
 
     /**
      * Constructor for positive tests - uses default editor and expectedStatusCode
      */
-    public PlayerCreationService(PlayerCreateRequest playerData) {
+    public PlayerCreationService(PlayerCreateRequest playerData, List<Long> playerIds) {
         super(); // Uses defaults: editor="supervisor", expectedStatusCode=200
         this.playerData = playerData;
+        this.playerIds = playerIds;
         executePlayerCreation();
+        trackForCleanup();
     }
 
     /**
      * Constructor for negative tests - custom editor, default expectedStatusCode
      */
-    public PlayerCreationService(PlayerCreateRequest playerData, String editor) {
+    public PlayerCreationService(PlayerCreateRequest playerData, String editor, List<Long> playerIds) {
         super(editor); // Uses default expectedStatusCode=200
         this.playerData = playerData;
+        this.playerIds = playerIds;
         executePlayerCreation();
+        trackForCleanup();
     }
 
     /**
      * Constructor for negative tests - custom editor and expectedStatusCode
      */
-    public PlayerCreationService(PlayerCreateRequest playerData, String editor, Integer expectedStatusCode) {
+    public PlayerCreationService(PlayerCreateRequest playerData, String editor, Integer expectedStatusCode, List<Long> playerIds) {
         super(editor, expectedStatusCode);
         this.playerData = playerData;
+        this.playerIds = playerIds;
         executePlayerCreation();
+        trackForCleanup();
     }
 
     @Override
@@ -53,7 +60,14 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
         response = new PlayerApiClient().createPlayer(editor, playerData);
         if (response.statusCode() == 200) {
             this.createdPlayer = response.as(PlayerCreateResponse.class);
+        }
+    }
 
+    @Step("Track created player for cleanup")
+    private void trackForCleanup() {
+        if (createdPlayer != null && createdPlayer.getId() != null) {
+            playerIds.add(createdPlayer.getId());
+            logger.info("Added player ID {} to cleanup list", createdPlayer.getId());
         }
     }
 
@@ -87,6 +101,11 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
         return createdPlayer;
     }
 
+    /**
+     * @deprecated Use the automatic cleanup tracking instead
+     * Manual tracking method kept for backward compatibility
+     */
+    @Deprecated
     @Step("Track created player for cleanup")
     public PlayerCreationService trackForCleanup(List<Long> playerIds) {
         if (createdPlayer != null && createdPlayer.getId() != null) {

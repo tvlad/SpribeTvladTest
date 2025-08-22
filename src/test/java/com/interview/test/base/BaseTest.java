@@ -30,7 +30,7 @@ public abstract class BaseTest {
     protected SoftAssert softAssert;
 
     // Test data cleanup tracking
-    protected List<Long> createdPlayerIds;
+    protected List<Long> createdPlayerIds = new ArrayList<>();
 
     // Common test data
     protected String validEditor;
@@ -129,11 +129,14 @@ public abstract class BaseTest {
      */
     @Step("Clean up created test players")
     protected void cleanUpCreatedPlayers() {
-        List<PlayerItem> playerList = new PlayerGetAllService().getPlayerList();
-        playerList.forEach(item -> {
-            if (Arrays.stream(VALID_SCREEN_NAMES).filter(item.getScreenName()::contains).count() == 1)
-                playerApi.deletePlayer(config.getValidEditor(), item.getId());
-        });
+        // Commented possibility to clean up created players without stored list, based on some specific fields value
+//        List<PlayerItem> playerList = new PlayerGetAllService().getPlayerList();
+//        playerList.forEach(item -> {
+//            if (Arrays.stream(VALID_SCREEN_NAMES).filter(item.getScreenName()::contains).count() == 1)
+//                playerApi.deletePlayer(config.getValidEditor(), item.getId());
+//        });
+        if (!createdPlayerIds.isEmpty())
+            createdPlayerIds.forEach(item -> playerApi.deletePlayer(config.getValidEditor(), item));
     }
 
     // Common assertion methods

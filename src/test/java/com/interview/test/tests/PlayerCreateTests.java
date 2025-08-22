@@ -7,6 +7,8 @@ import com.interview.test.models.PlayerCreateResponse;
 import com.interview.test.utils.TestDataFactory;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.StringUtils;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -25,20 +27,21 @@ public class PlayerCreateTests extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
     public void testCreatePlayerWithValidData() {
         PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData();
-        new PlayerCreationService(testData)
+        new PlayerCreationService(testData, createdPlayerIds)
                 .verifyStatusCode(200)
-                .verifyCreatedUser();
+                .verifyCreatedUser()
+        ;
     }
 
-    @Test(groups = {"smoke", "positive"}, priority = 2)
+    @Test(groups = {"smoke", "negative"}, priority = 2)
     @Story("Create Player with Admin Editor")
     @Description("Test player creation using admin editor privileges")
     @Severity(SeverityLevel.NORMAL)
     public void testCreatePlayerWithAdminEditor() {
         PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData();
-        new PlayerCreationService(testData, config.getAdminEditor())
+        new PlayerCreationService(testData, config.getAdminEditor(), createdPlayerIds)
                 .verifyStatusCode(403)
-                ;
+        ;
     }
 
     @Test(groups = {"positive", "regression"}, priority = 3)
@@ -46,31 +49,30 @@ public class PlayerCreateTests extends BaseTest {
     @Description("Test player creation when password is optional (not provided)")
     @Severity(SeverityLevel.NORMAL)
     public void testCreatePlayerWithoutPassword() {
-        PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData();
-        testData.setPassword(null);
-        new PlayerCreationService(testData)
+        PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData().setPassword(null);
+        new PlayerCreationService(testData, createdPlayerIds)
                 .verifyStatusCode(200)
-//                .verifyCreatedUser()
-                ;
+                .verifyCreatedUser()
+        ;
     }
 
-    @Test(groups = {"positive", "regression"}, priority = 4)
-    @Story("Create Player with Boundary Values")
-    @Description("Test player creation with minimum and maximum allowed values")
+    @DataProvider()
+    public Object[][] ageBoundaryTestData() {
+        return new Object[][]{
+                {17, "too young"},
+                {61, "too old"},
+        };
+    }
+
+    @Test(dataProvider = "ageBoundaryTestData", groups = {"positive", "regression"}, priority = 4)
+    @Story("Create Player with Age Boundary Values")
+    @Description("Test player creation with minimum and maximum allowed age values: {description}")
     @Severity(SeverityLevel.NORMAL)
-    public void testCreatePlayerWithBoundaryValues() {
-        TestDataFactory.PlayerData testData = createBoundaryTestData();
-
-        Response response = createAndTrackPlayer(testData);
-
-        // Should succeed or fail gracefully based on boundary validation
-        if (response.getStatusCode() == 200) {
-            validateSuccessfulCreation(response, testData);
-        } else {
-            // Document boundary validation behavior
-            assertTrue(response.getStatusCode() >= 400,
-                    "Boundary values should either succeed or return client error");
-        }
+    public void testCreatePlayerWithBoundaryValues(int ageValue, String description) {
+        PlayerCreateRequest testData = PlayerCreateRequest.generateValidPlayerData().setAge(ageValue);
+        new PlayerCreationService(testData, createdPlayerIds)
+                .verifyStatusCode(400)
+        ;
     }
 
     @Test(groups = {"negative", "critical"}, priority = 5)
