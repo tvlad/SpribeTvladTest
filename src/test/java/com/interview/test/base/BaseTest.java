@@ -1,7 +1,6 @@
 package com.interview.test.base;
 
 import com.interview.test.api.PlayerApiClient;
-import com.interview.test.api.PlayerGetAllService;
 import com.interview.test.config.ConfigurationManager;
 import com.interview.test.models.*;
 import com.interview.test.utils.TestDataFactory;
@@ -13,7 +12,6 @@ import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.*;
@@ -33,7 +31,7 @@ public abstract class BaseTest {
     protected List<Long> createdPlayerIds = new ArrayList<>();
 
     // Common test data
-    protected String validEditor;
+    protected String supervisorEditor;
     protected String adminEditor;
     protected String invalidEditor;
 
@@ -56,12 +54,12 @@ public abstract class BaseTest {
         playerApi = new PlayerApiClient();
 
         // Initialize test data
-        validEditor = config.getValidEditor();
+        supervisorEditor = config.getValidEditor();
         adminEditor = config.getAdminEditor();
         invalidEditor = config.getInvalidEditor();
 
         logger.info("Using editors - Valid: {}, Admin: {}, Invalid: {}",
-                validEditor, adminEditor, invalidEditor);
+                supervisorEditor, adminEditor, invalidEditor);
     }
 
 
@@ -90,7 +88,7 @@ public abstract class BaseTest {
      */
     @Step("Create player for testing: {testData}")
     protected Response createAndTrackPlayer(TestDataFactory.PlayerData testData) {
-        return createAndTrackPlayer(validEditor, testData);
+        return createAndTrackPlayer(supervisorEditor, testData);
     }
 
     /**

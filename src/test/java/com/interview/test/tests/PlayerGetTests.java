@@ -94,4 +94,33 @@ public class PlayerGetTests extends BaseTest {
         new PlayerGetByIdService(extremeId)
                 .verifyStatusCode(404);
     }
+
+    @Test(groups = {"smoke", "positive"}, priority = 2)
+    @Story("Get Player with Admin Editor")
+    @Description("Test player retrieval using admin editor privileges")
+    @Severity(SeverityLevel.NORMAL)
+    public void testGetPlayerWithAdminEditor() {
+        new PlayerGetByIdService(adminEditor, existedPlayer.getId())
+                .verifyStatusCode();
+    }
+
+    @Test(groups = {"negative", "critical"}, priority = 7)
+    @Story("Get Player with Invalid Editor")
+    @Description("Test player retrieval fails with unauthorized editor")
+    @Severity(SeverityLevel.CRITICAL)
+    public void testGetPlayerWithInvalidEditor() {
+        new PlayerGetByIdService(invalidEditor, existedPlayer.getId())
+                .verifyStatusCode(403);
+    }
+
+    @Test(groups = {"negative", "critical"}, priority = 9)
+    @Story("Get Player with Non-existent Editor")
+    @Description("Test player retrieval fails with non-existent editor")
+    @Severity(SeverityLevel.CRITICAL)
+    public void testGetPlayerWithNonExistentEditor() {
+        String nonExistentEditor = "non_existent_editor_" + System.currentTimeMillis();
+
+        new PlayerGetByIdService(nonExistentEditor, existedPlayer.getId())
+                .verifyStatusCode(403);
+    }
 }

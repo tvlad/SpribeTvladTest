@@ -25,7 +25,7 @@ public class PlayerUpdateTests extends BaseTest {
 
         // Update with new data
         PlayerUpdateRequest updateRequest = TestDataFactory.createValidUpdateRequest();
-        Response updateResponse = playerApi.updatePlayer(validEditor, playerId, updateRequest);
+        Response updateResponse = playerApi.updatePlayer(supervisorEditor, playerId, updateRequest);
 
         validatePlayerUpdate(updateResponse, playerId, updateRequest);
     }
@@ -45,7 +45,7 @@ public class PlayerUpdateTests extends BaseTest {
                 .screenName("UpdatedScreenName")
                 .build();
 
-        Response updateResponse = playerApi.updatePlayer(validEditor, playerId, updateRequest);
+        Response updateResponse = playerApi.updatePlayer(supervisorEditor, playerId, updateRequest);
         validatePlayerUpdate(updateResponse, playerId, updateRequest);
     }
 
@@ -57,7 +57,7 @@ public class PlayerUpdateTests extends BaseTest {
         Long nonExistentId = 999999L;
         PlayerUpdateRequest updateRequest = TestDataFactory.createValidUpdateRequest();
 
-        Response response = playerApi.updatePlayer(validEditor, nonExistentId, updateRequest);
+        Response response = playerApi.updatePlayer(supervisorEditor, nonExistentId, updateRequest);
         validateErrorResponse(response, 404);
     }
 

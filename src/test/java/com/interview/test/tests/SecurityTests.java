@@ -20,7 +20,7 @@ public class SecurityTests extends BaseTest {
         TestDataFactory.PlayerData injectionData = TestDataFactory.generateSqlInjectionData();
 
         Response response = playerApi.createPlayer(
-                validEditor,
+                supervisorEditor,
                 injectionData.getLogin(),
                 injectionData.getPassword(),
                 "user",

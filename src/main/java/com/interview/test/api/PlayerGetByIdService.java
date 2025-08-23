@@ -21,6 +21,12 @@ public class PlayerGetByIdService extends BaseService<PlayerGetByIdService> {
         executePlayerRetrieval();
     }
 
+    public PlayerGetByIdService(String editor, Long playerId) {
+        super(editor); // Uses default expectedStatusCode=200
+        this.playerId = playerId;
+        executePlayerRetrieval();
+    }
+
     /**
      * Constructor for negative tests - custom expectedStatusCode
      */
