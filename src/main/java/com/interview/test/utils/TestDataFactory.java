@@ -131,35 +131,7 @@ public class TestDataFactory {
                 .build();
     }
 
-    /**
-     * Creates PlayerUpdateRequest with valid data
-     */
-    public static PlayerUpdateRequest createValidUpdateRequest() {
-        return PlayerUpdateRequest.builder()
-                .login(generateUniqueLogin())
-                .password(config.getProperty("default.player.password", "testPassword123"))
-                .role(getRandomValidRole())
-                .age(generateValidAge())
-                .gender(getRandomValidGender())
-                .screenName(generateValidScreenName())
-                .build();
-    }
 
-    /**
-     * Creates PlayerUpdateRequest with partial data (for testing partial updates)
-     */
-    public static PlayerUpdateRequest createPartialUpdateRequest() {
-        PlayerUpdateRequest.Builder builder = PlayerUpdateRequest.builder();
-
-        // Randomly include some fields
-        if (random.nextBoolean()) builder.login(generateUniqueLogin());
-        if (random.nextBoolean()) builder.role(getRandomValidRole());
-        if (random.nextBoolean()) builder.age(generateValidAge());
-        if (random.nextBoolean()) builder.gender(getRandomValidGender());
-        if (random.nextBoolean()) builder.screenName(generateValidScreenName());
-
-        return builder.build();
-    }
 
     // Helper methods for generating specific data types
 
