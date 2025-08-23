@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "age": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Player's age, must be non-negative"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Player's gender"
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Unique player identifier, must be non-negative"
+          },
+          "role": {
+            "type": "string",
+            "description": "Player's role in the system"
+          },
+          "screenName": {
+            "type": "string",
+            "description": "Player's display name"
+          }
+        },
+        "required": ["age", "gender", "id", "role", "screenName"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["players"],
+  "additionalProperties": false
+}

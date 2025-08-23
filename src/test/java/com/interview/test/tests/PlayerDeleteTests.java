@@ -1,38 +1,36 @@
 package com.interview.test.tests;
 
+import com.interview.test.api.PlayerCreationService;
+import com.interview.test.api.PlayerDeleteService;
 import com.interview.test.base.BaseTest;
-import com.interview.test.models.PlayerCreateResponse;
-import com.interview.test.utils.TestDataFactory;
+import com.interview.test.models.PlayerCreateRequest;
 import io.qameta.allure.*;
-import io.restassured.response.Response;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
 
 @Epic("Player Management API")
 @Feature("Player Deletion")
 public class PlayerDeleteTests extends BaseTest {
 
-    @Test(groups = {"smoke", "positive", "critical"}, priority = 1)
+    private long playerToDeleteId;
+
+    @BeforeMethod(alwaysRun = true, groups = "playerToDelete")
+    private void createPlayerToDelete() {
+        this.playerToDeleteId = new PlayerCreationService(PlayerCreateRequest.generateValidPlayerData(), createdPlayerIds)
+                .verifyStatusCode(200).getCreatedPlayer().getId();
+    }
+
+
+    @Test(groups = {"smoke", "positive", "critical", "playerToDelete"}, priority = 1)
     @Story("Delete Player Successfully")
     @Description("Test successful player deletion with valid editor")
     @Severity(SeverityLevel.CRITICAL)
     public void testDeletePlayerSuccessfully() {
-        // Create test player
-        TestDataFactory.PlayerData testData = createValidTestData();
-        Response createResponse = createAndTrackPlayer(testData);
-        Long playerId = createResponse.as(PlayerCreateResponse.class).getId();
 
-        // Delete player
-        Response deleteResponse = playerApi.deletePlayer(validEditor, playerId);
-        validatePlayerDeletion(deleteResponse);
-
-        // Verify player is deleted by trying to retrieve
-        Response getResponse = playerApi.getPlayerById(playerId);
-        assertEquals(getResponse.getStatusCode(), 404, "Player should not exist after deletion");
-
-        // Remove from cleanup list since already deleted
-        createdPlayerIds.remove(playerId);
+        new PlayerDeleteService(playerToDeleteId, createdPlayerIds)
+                .verifyStatusCode()
+                .verifyDeletedPlayer();
     }
 
     @Test(groups = {"negative", "critical"}, priority = 2)
@@ -40,26 +38,18 @@ public class PlayerDeleteTests extends BaseTest {
     @Description("Test deletion fails gracefully for non-existent player")
     @Severity(SeverityLevel.CRITICAL)
     public void testDeleteNonExistentPlayer() {
-        Long nonExistentId = 999999L;
-        Response response = playerApi.deletePlayer(validEditor, nonExistentId);
-
-        // Should return 404 or handle gracefully
-        assertTrue(response.getStatusCode() == 404 || response.getStatusCode() == 200,
-                "Should handle non-existent player deletion gracefully");
+        Long nonExistentId = 9999999999999L;
+        new PlayerDeleteService(nonExistentId, createdPlayerIds)
+                .verifyStatusCode(404);
     }
 
-    @Test(groups = {"negative", "regression"}, priority = 3)
+    @Test(groups = {"negative", "regression", "playerToDelete"}, priority = 3)
     @Story("Delete Player with Invalid Editor")
     @Description("Test deletion fails with unauthorized editor")
     @Severity(SeverityLevel.NORMAL)
     public void testDeletePlayerWithInvalidEditor() {
-        // Create test player
-        TestDataFactory.PlayerData testData = createValidTestData();
-        Response createResponse = createAndTrackPlayer(testData);
-        Long playerId = createResponse.as(PlayerCreateResponse.class).getId();
-
-        Response response = playerApi.deletePlayer(invalidEditor, playerId);
-        assertTrue(response.getStatusCode() == 401 || response.getStatusCode() == 403);
+        new PlayerDeleteService(playerToDeleteId, adminEditor, createdPlayerIds)
+                .verifyStatusCode();
     }
 
     @Test(groups = {"negative", "regression"}, priority = 4)
@@ -67,7 +57,16 @@ public class PlayerDeleteTests extends BaseTest {
     @Description("Test deletion fails with null player ID")
     @Severity(SeverityLevel.NORMAL)
     public void testDeletePlayerWithNullId() {
-        Response response = playerApi.deletePlayer(validEditor, null);
-        validateErrorResponse(response, 400);
+        new PlayerDeleteService(null, createdPlayerIds)
+                .verifyStatusCode(400);
+    }
+
+    @Test(groups = {"negative", "regression", "playerToDelete"}, priority = 4)
+    @Story("Delete Player with un-existed editor")
+    @Description("Test deletion fails with un-existed editor")
+    @Severity(SeverityLevel.NORMAL)
+    public void testDeletePlayerWithUnexistedEditor() {
+        new PlayerDeleteService(playerToDeleteId, invalidEditor, createdPlayerIds)
+                .verifyStatusCode(404);
     }
 }

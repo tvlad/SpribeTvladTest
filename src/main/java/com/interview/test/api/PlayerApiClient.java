@@ -47,6 +47,32 @@ public class PlayerApiClient extends BaseApiClient {
         return response;
     }
 
+    @Step("Create player with editor: {editor}")
+    public Response createPlayer(String editor, PlayerCreateRequest data) {
+        logOperation("CREATE_PLAYER", CREATE_PLAYER_ENDPOINT);
+
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("login", data.getLogin());
+        if (data.getPassword() != null) queryParams.put("password", data.getPassword());
+        queryParams.put("role", data.getRole());
+        queryParams.put("age", String.valueOf(data.getAge()));
+        queryParams.put("gender", data.getGender());
+        queryParams.put("screenName", data.getScreenName());
+
+        Response response = given()
+                .spec(createRequestSpec())
+                .pathParam("editor", editor)
+                .queryParams(queryParams)
+                .when()
+                .get(CREATE_PLAYER_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        logResult("CREATE_PLAYER", response.getStatusCode(), response.getTime());
+        return response;
+    }
+
     @Step("Delete player with ID: {playerId} by editor: {editor}")
     public Response deletePlayer(String editor, Long playerId) {
         logOperation("DELETE_PLAYER", DELETE_PLAYER_ENDPOINT);

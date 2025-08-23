@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.qameta.allure' version '2.11.2'
+    id 'org.gradle.test-retry' version '1.5.8'
 }
 
 group = 'com.interview.test'
@@ -64,8 +65,9 @@ allure {
 
 
 tasks.register('spribeTests', Test) {
+
     useTestNG() {
-        parallel = 'methods'
+        parallel = 'class'
         threadCount = findProperty('test.thread.count') ?: '3' as int
 
         // Set system properties at execution time
@@ -80,7 +82,6 @@ tasks.register('spribeTests', Test) {
         listeners << 'io.qameta.allure.testng.AllureTestNg'
         listeners << 'com.interview.test.listeners.TestExecutionListener'
         listeners << 'com.interview.test.listeners.AllureEnvironmentWriter'
-
     }
 
     // JVM arguments
@@ -102,6 +103,20 @@ tasks.register('spribeTests', Test) {
 
     // Fail fast
     failFast = false
+
+    // RETRY CONFIGURATION - Option 1: Using Gradle Test Retry Plugin
+    retry {
+        maxRetries = 3
+        maxFailures = 10
+        failOnPassedAfterRetry = false
+
+        filter {
+            // Only retry tests that failed due to flaky issues
+            includeClasses.add("**/FlakyTest*")
+            // Or exclude certain classes from retry
+            // excludeClasses.add("**/NonRetryableTest*")
+        }
+    }
 }
 
 tasks.register('debugTest', Test) {

@@ -15,12 +15,12 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class TestDataFactory {
 
-    private static final ConfigurationManager config = ConfigurationManager.getInstance();
+    public static final ConfigurationManager config = ConfigurationManager.getInstance();
     private static final Random random = new Random();
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     // Valid test data arrays
-    private static final String[] VALID_ROLES = {"supervisor", "admin", "user", "moderator"};
+    private static final String[] VALID_ROLES = {"supervisor", "admin"};
     private static final String[] VALID_GENDERS = {"MALE", "FEMALE", "OTHER"};
     private static final String[] VALID_SCREEN_NAMES = {
             "TestPlayer", "GameMaster", "ProGamer", "CoolUser", "PlayerOne",
@@ -28,7 +28,7 @@ public class TestDataFactory {
     };
 
     // Invalid test data arrays
-    private static final String[] INVALID_ROLES = {"guest", "unknown", "root", "superuser", "owner"};
+    private static final String[] INVALID_ROLES = {"guest", "unknown", "root", "superuser", "owner", "user", "moderator"};
     private static final String[] INVALID_GENDERS = {"male", "female", "M", "F", "UNKNOWN", "OTHER_INVALID"};
     private static final String[] INVALID_LOGINS = {"", " ", "ab", "x", null};
     private static final String[] INVALID_PASSWORDS = {"", " ", "123", "abc", "12345", null};
@@ -131,43 +131,15 @@ public class TestDataFactory {
                 .build();
     }
 
-    /**
-     * Creates PlayerUpdateRequest with valid data
-     */
-    public static PlayerUpdateRequest createValidUpdateRequest() {
-        return PlayerUpdateRequest.builder()
-                .login(generateUniqueLogin())
-                .password(config.getProperty("default.player.password", "testPassword123"))
-                .role(getRandomValidRole())
-                .age(generateValidAge())
-                .gender(getRandomValidGender())
-                .screenName(generateValidScreenName())
-                .build();
-    }
 
-    /**
-     * Creates PlayerUpdateRequest with partial data (for testing partial updates)
-     */
-    public static PlayerUpdateRequest createPartialUpdateRequest() {
-        PlayerUpdateRequest.Builder builder = PlayerUpdateRequest.builder();
-
-        // Randomly include some fields
-        if (random.nextBoolean()) builder.login(generateUniqueLogin());
-        if (random.nextBoolean()) builder.role(getRandomValidRole());
-        if (random.nextBoolean()) builder.age(generateValidAge());
-        if (random.nextBoolean()) builder.gender(getRandomValidGender());
-        if (random.nextBoolean()) builder.screenName(generateValidScreenName());
-
-        return builder.build();
-    }
 
     // Helper methods for generating specific data types
 
-    private static String getRandomValidRole() {
+    public static String getRandomValidRole() {
         return VALID_ROLES[random.nextInt(VALID_ROLES.length)];
     }
 
-    private static String getRandomValidGender() {
+    public static String getRandomValidGender() {
         return VALID_GENDERS[random.nextInt(VALID_GENDERS.length)];
     }
 
@@ -191,8 +163,8 @@ public class TestDataFactory {
         return INVALID_SCREEN_NAMES[random.nextInt(INVALID_SCREEN_NAMES.length)];
     }
 
-    private static Integer generateValidAge() {
-        return ThreadLocalRandom.current().nextInt(18, 100);
+    public static Integer generateValidAge() {
+        return ThreadLocalRandom.current().nextInt(17, 60);
     }
 
     private static Integer generateBoundaryAge() {
@@ -205,7 +177,7 @@ public class TestDataFactory {
         return invalidAges[random.nextInt(invalidAges.length)];
     }
 
-    private static String generateValidScreenName() {
+    public static String generateValidScreenName() {
         return VALID_SCREEN_NAMES[random.nextInt(VALID_SCREEN_NAMES.length)] +
                 ThreadLocalRandom.current().nextInt(1, 999);
     }

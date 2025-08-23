@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Unique player identifier"
+    },
+    "login": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's login username"
+    },
+    "screenName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's display name"
+    },
+    "gender": {
+      "type": "string",
+      "enum": ["MALE", "FEMALE", "OTHER"],
+      "description": "Player's gender"
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 17,
+      "maximum": 65,
+      "description": "Player's age"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["admin", "supervisor"],
+      "description": "Player's role in the system"
+    }
+  },
+  "required": [
+    "id",
+    "login",
+    "screenName",
+    "gender",
+    "age",
+    "role"
+  ],
+  "additionalProperties": false
+}
