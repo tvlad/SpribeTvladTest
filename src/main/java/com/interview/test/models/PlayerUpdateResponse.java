@@ -26,4 +26,9 @@ public class PlayerUpdateResponse extends BasePlayer {
                 ", screenName='" + getScreenName() + '\'' +
                 '}';
     }
+
+    public static PlayerUpdateResponse expectedUpdatedPlayer(Long userId, PlayerUpdateRequest data) {
+        return (PlayerUpdateResponse) new PlayerUpdateResponse().setId(userId).setAge(data.getAge()).setGender(data.getGender())
+                .setRole(data.getRole()).setScreenName(data.getScreenName()).setLogin(data.getLogin());
+    }
 }

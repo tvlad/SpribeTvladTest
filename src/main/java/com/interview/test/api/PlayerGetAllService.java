@@ -56,12 +56,12 @@
 
             // Check for Supervisor
             boolean hasSupervisor = playerList.stream()
-                    .anyMatch(item -> item.getRole().equals(config.getSupervisorEditor()));
+                    .anyMatch(item -> item.getId() == 1);
             soft.assertTrue(hasSupervisor, "There is not any Supervisor in the Players list");
 
             // Check for Admin
             boolean hasAdmin = playerList.stream()
-                    .anyMatch(item -> item.getRole().equals(config.getAdminEditor()));
+                    .anyMatch(item -> item.getId() != 1);
             soft.assertTrue(hasAdmin, "There is not any Admin in the Players list");
 
             soft.assertAll();

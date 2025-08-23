@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;
 import java.util.Objects;
 
+import static com.interview.test.utils.TestDataFactory.*;
+
 /**
  * Player Update Request Model
  */
@@ -156,5 +158,43 @@ public class PlayerUpdateRequest {
                 ", screenName='" + screenName + '\'' +
                 ", password='" + (password != null ? "***" : null) + '\'' +
                 '}';
+    }
+
+    public static PlayerUpdateRequest updateData(PlayerGetByIdResponse data) {
+        return new PlayerUpdateRequest()
+                .login(generateUniqueLogin())
+                .password(data.getPassword() + "edited")
+                .role("admin".equals(data.getRole()) ? "supervisor" : "admin")
+                .age(generateValidAge())
+                .gender(getRandomValidGender())
+                .screenName(generateValidScreenName());
+    }
+
+    public static PlayerUpdateRequest updateData(PlayerGetByIdResponse initial, List<String> fieldsToUpdate) {
+
+        if (fieldsToUpdate == null || fieldsToUpdate.isEmpty())
+            return PlayerUpdateRequest.updateData(initial);
+
+        PlayerUpdateRequest data = PlayerUpdateRequest.builder()
+                .age(initial.getAge())
+                .login(initial.getLogin())
+                .password(initial.getPassword())
+                .role(initial.getRole())
+                .gender(initial.getGender())
+                .screenName(initial.getScreenName())
+                .build();
+
+        for (String field : fieldsToUpdate) {
+            switch (field) {
+                case "login" -> data.login(generateUniqueLogin());
+                case "password" -> data.password(data.getPassword() + "edited");
+                case "role" -> data.role("admin".equals(data.getRole()) ? "supervisor" : "admin");
+                case "age" -> data.age(generateValidAge());
+                case "gender" -> data.gender(getRandomValidGender());
+                case "screenName" -> data.screenName(generateValidScreenName());
+                default -> throw new IllegalArgumentException("Unknown field: " + field);
+            }
+        }
+        return data;
     }
 }

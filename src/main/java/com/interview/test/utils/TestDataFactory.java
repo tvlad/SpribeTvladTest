@@ -20,7 +20,7 @@ public class TestDataFactory {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     // Valid test data arrays
-    private static final String[] VALID_ROLES = {"supervisor", "admin", "user", "moderator"};
+    private static final String[] VALID_ROLES = {"supervisor", "admin"};
     private static final String[] VALID_GENDERS = {"MALE", "FEMALE", "OTHER"};
     private static final String[] VALID_SCREEN_NAMES = {
             "TestPlayer", "GameMaster", "ProGamer", "CoolUser", "PlayerOne",
@@ -28,7 +28,7 @@ public class TestDataFactory {
     };
 
     // Invalid test data arrays
-    private static final String[] INVALID_ROLES = {"guest", "unknown", "root", "superuser", "owner"};
+    private static final String[] INVALID_ROLES = {"guest", "unknown", "root", "superuser", "owner", "user", "moderator"};
     private static final String[] INVALID_GENDERS = {"male", "female", "M", "F", "UNKNOWN", "OTHER_INVALID"};
     private static final String[] INVALID_LOGINS = {"", " ", "ab", "x", null};
     private static final String[] INVALID_PASSWORDS = {"", " ", "123", "abc", "12345", null};

@@ -144,7 +144,7 @@ public class PlayerCreateRequest {
         return PlayerCreateRequest.builder()
                 .login(generateUniqueLogin())
                 .password(config.getProperty("default.player.password", "testPassword123"))
-                .role("admin")
+                .role(config.getAdminEditor())
                 .age(generateValidAge())
                 .gender(getRandomValidGender())
                 .screenName(generateValidScreenName())
