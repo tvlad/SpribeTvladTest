@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 150,
+      "description": "Player's age"
+    },
+    "gender": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's gender"
+    },
+    "id": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Unique player identifier"
+    },
+    "login": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's login username"
+    },
+    "password": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's password"
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's role in the system"
+    },
+    "screenName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Player's display name"
+    }
+  },
+  "required": [
+    "age",
+    "gender",
+    "id",
+    "login",
+    "password",
+    "role",
+    "screenName"
+  ],
+  "additionalProperties": false
+}

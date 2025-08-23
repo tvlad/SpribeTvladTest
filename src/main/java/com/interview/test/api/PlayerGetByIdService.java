@@ -46,6 +46,11 @@ public class PlayerGetByIdService extends BaseService<PlayerGetByIdService> {
         return 200;
     }
 
+    @Override
+    protected String getSchemaPath() {
+        return "schemas/player-get-by-id-schema.json";
+    }
+
     private void executePlayerRetrieval() {
         response = new PlayerApiClient().getPlayerById(playerId);
         String contentLength = response.getHeader("Content-Length");

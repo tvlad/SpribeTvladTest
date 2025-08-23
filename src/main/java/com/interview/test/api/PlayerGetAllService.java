@@ -1,53 +1,94 @@
-package com.interview.test.api;
+    package com.interview.test.api;
 
-import com.interview.test.models.PlayerCreateRequest;
-import com.interview.test.models.PlayerCreateResponse;
-import com.interview.test.models.PlayerGetAllResponse;
-import com.interview.test.models.PlayerItem;
+    import com.interview.test.models.PlayerGetAllResponse;
+    import com.interview.test.models.PlayerGetByIdResponse;
+    import com.interview.test.models.PlayerItem;
+    import io.qameta.allure.Step;
+    import org.testng.asserts.SoftAssert;
 
-import java.util.List;
+    import java.util.List;
+    import java.util.Objects;
 
-public class PlayerGetAllService extends BaseService<PlayerCreationService> {
+    import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+    import static org.testng.Assert.assertTrue;
 
-    private List<PlayerItem> playerList;
+    public class PlayerGetAllService extends BaseService<PlayerGetAllService> {
 
-    public List<PlayerItem> getPlayerList() {
-        return playerList;
-    }
+        private List<PlayerItem> playerList;
 
-    /**
-     * Constructor for positive tests - uses default editor and expectedStatusCode
-     */
-    public PlayerGetAllService() {
-        super(); // Uses defaults: editor="supervisor", expectedStatusCode=200
-        executeGetAllPlayers();
-    }
-
-    /**
-     * Constructor for negative tests - custom editor and expectedStatusCode
-     */
-    public PlayerGetAllService(String editor, Integer expectedStatusCode) {
-        super(editor, expectedStatusCode);
-        executeGetAllPlayers();
-    }
-
-    private void executeGetAllPlayers() {
-        response = new PlayerApiClient().getAllPlayers();
-        if (response.statusCode() == 200) {
-            this.playerList = response.as(PlayerGetAllResponse.class).getPlayers();
+        public List<PlayerItem> getPlayerList() {
+            return playerList;
         }
+
+        /**
+         * Constructor for positive tests - uses default editor and expectedStatusCode
+         */
+        public PlayerGetAllService() {
+            super(); // Uses defaults: editor="supervisor", expectedStatusCode=200
+            executeGetAllPlayers();
+        }
+
+        /**
+         * Constructor for negative tests - custom editor and expectedStatusCode
+         */
+        public PlayerGetAllService(String editor) {
+            super(editor);
+            executeGetAllPlayers();
+        }
+
+        private void executeGetAllPlayers() {
+            response = new PlayerApiClient().getAllPlayers();
+            if (response.statusCode() == 200) {
+                this.playerList = response.as(PlayerGetAllResponse.class).getPlayers();
+            }
+        }
+
+        @Step
+        public PlayerGetAllService verifyPlayerListAmount(){
+            assertTrue(playerList.size() >= 2,
+                    "Should return at least supervisor and admin players");
+            return this;
+        }
+
+        @Step("Verify mandatory users availability")
+        public void verifyMandatoryUsersAvailability() {
+            SoftAssert soft = new SoftAssert();
+
+            // Check for Supervisor
+            boolean hasSupervisor = playerList.stream()
+                    .anyMatch(item -> item.getRole().equals(config.getSupervisorEditor()));
+            soft.assertTrue(hasSupervisor, "There is not any Supervisor in the Players list");
+
+            // Check for Admin
+            boolean hasAdmin = playerList.stream()
+                    .anyMatch(item -> item.getRole().equals(config.getAdminEditor()));
+            soft.assertTrue(hasAdmin, "There is not any Admin in the Players list");
+
+            soft.assertAll();
+
+        }
+
+
+        @Override
+        protected String getDefaultEditor() {
+            return "supervisor";
+        }
+
+        @Override
+        protected Integer getDefaultExpectedStatusCode() {
+            return 200;
+        }
+
+        @Override
+        protected String getSchemaPath() {
+            return "schemas/player-get-all-schema.json";
+        }
+
+        @Step
+        public void verifyNewlyCreatedPlayerAvailability(PlayerGetByIdResponse createdPlayer) {
+            playerList.stream().filter(playerItem -> Objects.equals(playerItem.getId(), createdPlayer.getId()))
+                    .findFirst()
+                    .orElseThrow(()-> new AssertionError(String.format("There is not user with id{%s}", createdPlayer.getId())));
+        }
+
     }
-
-
-    @Override
-    protected String getDefaultEditor() {
-        return "supervisor";
-    }
-
-    @Override
-    protected Integer getDefaultExpectedStatusCode() {
-        return 200;
-    }
-
-
-}

@@ -54,7 +54,7 @@ public abstract class BaseTest {
         playerApi = new PlayerApiClient();
 
         // Initialize test data
-        supervisorEditor = config.getValidEditor();
+        supervisorEditor = config.getSupervisorEditor();
         adminEditor = config.getAdminEditor();
         invalidEditor = config.getInvalidEditor();
 
@@ -134,7 +134,7 @@ public abstract class BaseTest {
 //                playerApi.deletePlayer(config.getValidEditor(), item.getId());
 //        });
         if (!createdPlayerIds.isEmpty())
-            createdPlayerIds.forEach(item -> playerApi.deletePlayer(config.getValidEditor(), item));
+            createdPlayerIds.forEach(item -> playerApi.deletePlayer(config.getSupervisorEditor(), item));
     }
 
     // Common assertion methods

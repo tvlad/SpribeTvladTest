@@ -99,7 +99,7 @@ public class ConfigurationManager {
         return Integer.parseInt(getProperty("api.retry.delay", "1000"));
     }
 
-    public String getValidEditor() {
+    public String getSupervisorEditor() {
         return getProperty("test.data.valid.editor", "supervisor");
     }
 
@@ -139,7 +139,7 @@ public class ConfigurationManager {
         logger.info("Allure Enabled: {}", isAllureEnabled());
         logger.info("Retry Count: {}", getRetryCount());
         logger.info("Retry Delay: {}ms", getRetryDelay());
-        logger.info("Valid Editor: {}", getValidEditor());
+        logger.info("Valid Editor: {}", getSupervisorEditor());
         logger.info("Admin Editor: {}", getAdminEditor());
         logger.info("========================");
     }

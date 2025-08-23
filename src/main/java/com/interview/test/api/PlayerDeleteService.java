@@ -57,6 +57,11 @@ public class PlayerDeleteService extends BaseService<PlayerDeleteService> {
         return 204;
     }
 
+    @Override
+    protected String getSchemaPath() {
+        return "";
+    }
+
     private void executePlayerDeletion() {
         response = new PlayerApiClient().deletePlayer(editor, playerId);
         if (response.statusCode() == 200) {

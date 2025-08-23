@@ -62,6 +62,11 @@ public class PlayerCreationService extends BaseService<PlayerCreationService> {
         return 200;
     }
 
+    @Override
+    protected String getSchemaPath() {
+        return "schemas/player-create-schema.json";
+    }
+
     private void executePlayerCreation() {
         response = new PlayerApiClient().createPlayer(editor, playerData);
         if (response.statusCode() == 200) {

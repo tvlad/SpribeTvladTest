@@ -6,6 +6,8 @@ import io.restassured.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+
 /**
  * Base service class that provides common functionality for all API service classes
  * @param <T> the service type for method chaining
@@ -51,6 +53,33 @@ public abstract class BaseService<T extends BaseService<T>> {
      * Each service should define its default expected status code
      */
     protected abstract Integer getDefaultExpectedStatusCode();
+
+    /**
+     * Each service should define its schema file path
+     */
+    protected abstract String getSchemaPath();
+
+    /**
+     * Generic JSON schema validation
+     */
+    @Step("Verify JSON schema compliance")
+    public T verifyJsonSchema() {
+        response.then()
+                .assertThat()
+                .body(matchesJsonSchemaInClasspath(getSchemaPath()));
+        return (T) this;
+    }
+
+    /**
+     * JSON schema validation with custom schema path
+     */
+    @Step("Verify JSON schema compliance against custom schema")
+    public T verifyJsonSchema(String schemaPath) {
+        response.then()
+                .assertThat()
+                .body(matchesJsonSchemaInClasspath(schemaPath));
+        return (T) this;
+    }
 
     /**
      * Generic status code verification with custom expected code
