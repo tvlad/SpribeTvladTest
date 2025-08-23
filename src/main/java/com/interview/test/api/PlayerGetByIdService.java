@@ -54,7 +54,7 @@ public class PlayerGetByIdService extends BaseService<PlayerGetByIdService> {
     private void executePlayerRetrieval() {
         response = new PlayerApiClient().getPlayerById(playerId);
         String contentLength = response.getHeader("Content-Length");
-        if (response.statusCode() == 200 & contentLength == null) {
+        if (response.statusCode() == getDefaultExpectedStatusCode() & contentLength == null) {
             this.retrievedPlayer = response.as(PlayerGetByIdResponse.class);
         }
     }
@@ -63,6 +63,7 @@ public class PlayerGetByIdService extends BaseService<PlayerGetByIdService> {
     public PlayerGetByIdService verifyRetrievedPlayer() {
         SoftAssert soft = new SoftAssert();
         soft.assertEquals(response.statusCode(), expectedStatusCode.intValue(), "Expected retrieval status");
+        soft.assertNotNull(retrievedPlayer, "Parsed player is NULL");
 
         if (expectedStatusCode == 200) {
             soft.assertNotNull(retrievedPlayer, "Retrieved player should not be null");
